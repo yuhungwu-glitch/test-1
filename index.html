@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文字顏色對應練習</title>
+    <style>
+        /* CSS 樣式開始 */
+        body {
+            font-family: 'Noto Sans TC', sans-serif; /* 使用繁體中文常用字體 */
+            background-color: #FFFFFF; /* 全白背景 */
+            color: #333; /* 深灰色文字，高對比易讀 */
+            line-height: 1.6; /* 行高，增加閱讀舒適度 */
+            display: flex; /* 使用 Flex 佈局 */
+            flex-direction: column; /* 垂直排列 */
+            align-items: center; /* 水平置中 */
+            min-height: 100vh; /* 最小高度為視窗高度 */
+            padding: 20px;
+            box-sizing: border-box; /* 邊框盒模型 */
+        }
+        .container {
+            max-width: 800px; /* 限制內容最大寬度 */
+            margin: 0 auto; /* 置中顯示 */
+            padding: 20px; /* 內部邊距 */
+            background-color: #FFFFFF; /* 容器背景為白色 */
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%; /* 確保容器在小螢幕上能佔滿寬度 */
+        }
+        .header {
+            text-align: center; /* 標題置中 */
+            margin-bottom: 40px; /* 標題下方間距 */
+        }
+        .title {
+            font-size: 2.5rem; /* 大標題字體大小 */
+            color: #5C5346; /* 深棕色標題文字 */
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 1.2rem; /* 副標題字體大小 */
+            color: #888; /* 灰色副標題文字 */
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-size: 1.8rem; /* 區塊標題字體大小 */
+            font-weight: bold;
+            color: #C06C59; /* 紅棕色標題文字 */
+            margin-top: 30px;
+            margin-bottom: 15px;
+            text-align: center;
+            border-bottom: 2px solid #EBE4D5;
+            padding-bottom: 10px;
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* 自動調整列寬 */
+            gap: 15px; /* 網格間距 */
+            margin-top: 20px;
+            text-align: center;
+        }
+        .color-item {
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #FFFFFF; /* 項目背景為白色 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            font-size: 1.5rem; /* 顏色文字大小 */
+            font-weight: bold;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 80px; /* 固定高度，保持一致性 */
+        }
+        /* 特別處理黃色文字，確保在白底上可見 */
+        .color-item[style*="color: rgb(255, 255, 0)"],
+        .color-item[style*="color: rgb(255, 255, 0);"] { /* 黃色文字 */
+            background-color: #E0E0E0; /* 給黃色文字一個淺灰色背景，提供更好的對比 */
+            border-color: #C0C0C0; /* 加深邊框增加對比 */
+        }
+
+        /* 新增的選擇控制項樣式 */
+        .selection-controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .selection-controls label {
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.1rem;
+            color: #5C5346;
+        }
+        .word-count-select {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            font-size: 1rem;
+            min-width: 150px; /* 確保一致的寬度 */
+            cursor: pointer;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .apply-btn {
+            display: inline-block; /* 讓按鈕可以置中 */
+            padding: 15px 40px;
+            background-color: #C06C59;
+            color: #fff;
+            font-size: 1.5rem; /* 大字體按鈕 */
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px; /* 上方間距 */
+        }
+        .apply-btn:hover {
+            background-color: #A95C4F;
+        }
+
+        /* 訊息框樣式（延用） */
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            display: none;
+            z-index: 1000;
+        }
+        .message-box p {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #5C5346;
+            margin-bottom: 20px;
+        }
+        .message-box button {
+            padding: 10px 30px;
+            background-color: #C06C59;
+            color: #fff;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        /* CSS 樣式結束 */
+    </style>
+    <!-- 引入 Google Noto Sans TC 字體，確保繁體中文顯示正常 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="title">文字顏色與內容對應練習</h1>
+            <p class="subtitle">觀察文字內容與顏色的變化，幫助視覺與認知練習！</p>
+        </header>
+
+        <div class="action-buttons">
+            <button id="generate-all-btn" class="apply-btn">應用所有設定並生成</button>
+        </div>
+
+        <!-- 字色一致情境 -->
+        <section>
+            <h2 class="section-title">1. 字色一致 (Consistent Text Color)</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">文字內容與顯示的顏色相同。</p>
+            <div class="selection-controls">
+                <label for="consistent-count">顯示數量:</label>
+                <select id="consistent-count" class="word-count-select">
+                    <option value="4">4 個字 (A)</option>
+                    <option value="8">8 個字 (B)</option>
+                    <option value="16">16 個字 (C)</option>
+                    <option value="32">32 個字 (D)</option>
+                </select>
+            </div>
+            <div class="color-grid" id="consistent-colors">
+                <!-- 內容由 JavaScript 生成 -->
+            </div>
+        </section>
+
+        <!-- 字色不一致情境 -->
+        <section>
+            <h2 class="section-title">2. 字色不一致 (Inconsistent Text Color)</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">文字內容與顯示的顏色不同。</p>
+            <div class="selection-controls">
+                <label for="inconsistent-count">顯示數量:</label>
+                <select id="inconsistent-count" class="word-count-select">
+                    <option value="4">4 個字 (A)</option>
+                    <option value="8">8 個字 (B)</option>
+                    <option value="16">16 個字 (C)</option>
+                    <option value="32">32 個字 (D)</option>
+                </select>
+            </div>
+            <div class="color-grid" id="inconsistent-colors">
+                <!-- 內容由 JavaScript 生成 -->
+            </div>
+        </section>
+
+        <!-- 字色隨機情境 -->
+        <section>
+            <h2 class="section-title">3. 字色隨機 (Random Text Color)</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #666;">文字內容是顏色名稱，但顯示顏色是隨機的。</p>
+            <div class="selection-controls">
+                <label for="random-count">顯示數量:</label>
+                <select id="random-count" class="word-count-select">
+                    <option value="4">4 個字 (A)</option>
+                    <option value="8">8 個字 (B)</option>
+                    <option value="16">16 個字 (C)</option>
+                    <option value="32">32 個字 (D)</option>
+                </select>
+            </div>
+            <div class="color-grid" id="random-colors">
+                <!-- 內容由 JavaScript 生成 -->
+            </div>
+        </section>
+    </div>
+
+    <!-- 訊息框 -->
+    <div class="message-box" id="message-box">
+        <p id="message-text">設定已應用！</p>
+        <button id="close-message-btn">關閉</button>
+    </div>
+
+    <script>
+        // JavaScript 腳本開始
+
+        // 定義顏色名稱及其對應的十六進位顏色碼
+        // 已移除 '白' 色
+        const colors = [
+            { name: '紅', hex: '#FF0000' },
+            { name: '黃', hex: '#FFFF00' },
+            { name: '黑', hex: '#000000' },
+            { name: '藍', hex: '#0000FF' },
+            { name: '綠', hex: '#008000' },
+            { name: '紫', hex: '#800080' }
+        ];
+
+        // 取得 HTML 元素
+        const consistentColorsEl = document.getElementById('consistent-colors');
+        const inconsistentColorsEl = document.getElementById('inconsistent-colors');
+        const randomColorsEl = document.getElementById('random-colors');
+        const consistentCountEl = document.getElementById('consistent-count');
+        const inconsistentCountEl = document.getElementById('inconsistent-count');
+        const randomCountEl = document.getElementById('random-count');
+        const generateAllBtn = document.getElementById('generate-all-btn');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const closeMessageBtn = document.getElementById('close-message-btn');
+
+        // 輔助函數：顯示訊息
+        function showMessage(text) {
+            messageText.textContent = text;
+            messageBox.style.display = 'block';
+        }
+
+        // 輔助函數：隱藏訊息
+        function hideMessage() {
+            messageBox.style.display = 'none';
+        }
+
+        // 輔助函數：取得隨機顏色
+        function getRandomColorHex() {
+            const randomIndex = Math.floor(Math.random() * colors.length);
+            return colors[randomIndex].hex;
+        }
+
+        // 1. 生成字色一致的情境
+        function generateConsistentColors(count) {
+            consistentColorsEl.innerHTML = ''; // 清空現有內容
+            for (let i = 0; i < count; i++) {
+                const color = colors[i % colors.length]; // 循環使用顏色列表
+                const itemEl = document.createElement('div');
+                itemEl.className = 'color-item';
+                itemEl.style.color = color.hex; // 文字顏色與名稱一致
+                itemEl.textContent = color.name; // 文字內容為顏色名稱
+                consistentColorsEl.appendChild(itemEl);
+            }
+        }
+
+        // 2. 生成字色不一致的情境
+        function generateInconsistentColors(count) {
+            inconsistentColorsEl.innerHTML = ''; // 清空現有內容
+            // 確保顯示顏色與文字內容不一致，並循環使用不包含白色的顏色列表
+            for (let i = 0; i < count; i++) {
+                const colorContent = colors[i % colors.length]; // 文字內容 (例如: '紅')
+                // 顯示顏色為下一個顏色，實現不一致
+                const displayColor = colors[(i + 1) % colors.length]; 
+                
+                const itemEl = document.createElement('div');
+                itemEl.className = 'color-item';
+                itemEl.style.color = displayColor.hex; // 設定不一致的顏色
+                itemEl.textContent = colorContent.name; // 顯示原始顏色名稱
+                inconsistentColorsEl.appendChild(itemEl);
+            }
+        }
+
+        // 3. 生成字色隨機的情境
+        function generateRandomColors(count) {
+            randomColorsEl.innerHTML = ''; // 清空現有內容
+            for (let i = 0; i < count; i++) {
+                const colorContent = colors[i % colors.length]; // 文字內容 (例如: '紅')
+                const randomHex = getRandomColorHex(); // 取得一個隨機顏色
+
+                const itemEl = document.createElement('div');
+                itemEl.className = 'color-item';
+                itemEl.style.color = randomHex; // 設定隨機顏色
+                itemEl.textContent = colorContent.name; // 顯示原始顏色名稱
+                randomColorsEl.appendChild(itemEl);
+            }
+        }
+
+        // 應用所有設定並生成
+        function applyAllSettings() {
+            const consistentCount = parseInt(consistentCountEl.value);
+            const inconsistentCount = parseInt(inconsistentCountEl.value);
+            const randomCount = parseInt(randomCountEl.value);
+
+            generateConsistentColors(consistentCount);
+            generateInconsistentColors(inconsistentCount);
+            generateRandomColors(randomCount);
+
+            showMessage('設定已應用！');
+        }
+
+        // 初始化：頁面載入完成後執行
+        document.addEventListener('DOMContentLoaded', () => {
+            // 首次載入時，根據預設選單值生成內容
+            applyAllSettings();
+            
+            // 綁定主生成按鈕事件
+            generateAllBtn.addEventListener('click', applyAllSettings);
+            
+            // 綁定訊息框關閉按鈕事件
+            closeMessageBtn.addEventListener('click', hideMessage);
+        });
+        // JavaScript 腳本結束
+    </script>
+</body>
+</html>
